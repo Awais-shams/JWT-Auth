@@ -11,13 +11,11 @@ const complexityOptions = {
 };
 
 const schema = Joi.object({
-  name: Joi.string().min(3).max(20).case("lower").required(),
   email: Joi.string().email().required(),
   password: passwordComplexity(complexityOptions),
-  isAdmin: Joi.boolean(),
 });
 
-async function registerValidator(req, res, next) {
+async function loginValidator(req, res, next) {
   try {
     const valid = await schema.validateAsync(req.body);
     next();
@@ -26,4 +24,4 @@ async function registerValidator(req, res, next) {
   }
 }
 
-module.exports = registerValidator;
+module.exports = loginValidator;

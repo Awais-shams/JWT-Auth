@@ -5,8 +5,7 @@ const app = express();
 const morgan = require("morgan");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
-const register = require("./src/routes/registerRoute");
-const login = require("./src/routes/loginRoute");
+const user = require("./src/routes/userRoute");
 
 // * Built-in and custom middlewares
 app.use(express.json());
@@ -15,9 +14,6 @@ app.use(helmet());
 // * Environment Configuration
 const port = process.env.PORT || 3000;
 
-// * Creating a web server
-app.listen(port, () => console.log(`Listening on Port ${port}...`));
-
 // * Mongoose/mongodb integration
 mongoose
   .connect("mongodb://localhost/jwt-auth")
@@ -25,6 +21,11 @@ mongoose
   .catch(() => console.log("Mongodb connection failed"));
 
 // * RESTFul Api's
-app.use("/api/register", register);
+app.get("/", (req, res) => {
+  res.set("Content-Type", "text/html");
+  res.send(Buffer.from("<h2>Test String</h2>"));
+});
+app.use("/api/user", user);
 
-app.use("/api/login", login);
+// * Creating a web server
+app.listen(port, () => console.log(`Listening on Port ${port}...`));

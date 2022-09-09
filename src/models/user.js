@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const registerSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: String,
     email: {
@@ -16,7 +16,7 @@ const registerSchema = new mongoose.Schema(
 );
 
 // * Adding JWT method to schema
-registerSchema.methods.generateAuthToken = function () {
+userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
       _id: this._id,
@@ -27,8 +27,6 @@ registerSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-const Register = mongoose.model("register", registerSchema);
+const User = mongoose.model("user", userSchema);
 
-console.log(Register);
-
-module.exports = Register;
+module.exports = User;

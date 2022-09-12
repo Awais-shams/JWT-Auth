@@ -1,16 +1,19 @@
 const bcrypt = require("bcrypt");
-const { assert } = require("joi");
 
 const User = require("../models/user");
 
 async function loginUser(req, res, next) {
-  const verify = await User.findOne({ email: req.body.email });
+  const user = await User.findOne({ email: req.body.email });
+  console.log(user);
   try {
-    const compare = await bcrypt.compare(req.body.password, verify.password);
+    const compare = await bcrypt.compare(req.body.password, user.password);
+    console.log(compare);
     if (compare) {
-      const token = await verifyEmail.generateAuthToken();
-      console.log("first");
-      res.header("x-auth-token", token).send({ data: "awais" });
+      const token = await user.generateAuthToken();
+      console.log(token);
+      res.header("x-auth-token", token).send({
+        token: token,
+      });
     }
   } catch (err) {
     res.status(404).send(err);

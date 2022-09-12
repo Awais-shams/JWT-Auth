@@ -27,5 +27,11 @@ app.get("/", (req, res) => {
 });
 app.use("/api/user", user);
 
+app.use("/api/university", user);
+app.use("/api/course", user);
+app.use("/api/data", user);
+
 // * Creating a web server
 app.listen(port, () => console.log(`Listening on Port ${port}...`));
+
+console.log(process.env.PRIVATE_KEY);

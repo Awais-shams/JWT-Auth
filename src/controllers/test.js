@@ -1,5 +1,6 @@
 const University = require("../models/university");
 const Courses = require("../models/course");
+const GeoSpatialLocation = require("../models/map");
 
 async function addUniversity(req, res, next) {
   try {
@@ -82,8 +83,74 @@ async function fetchData(req, res, next) {
   }
 }
 
+async function updateCourse(req, res, next) {
+  try {
+    const updateCourse = await Courses.findById(req.params.id);
+    updateCourse.name = req.body.name;
+    console.log(updateCourse);
+    const newCourse = await updateCourse.save();
+    await res.send(newCourse);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function textSearch(req, res) {
+  try {
+    const textSearch = await Courses.find({
+      $text: {
+        $search: "mathematics electronics",
+      },
+    });
+    await res.send(textSearch);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function addLocation(req, res) {
+  try {
+    const location = await GeoSpatialLocation.insertMany([
+      {
+        name: "UMASS Amherst",
+        location: {
+          type: "Point",
+          coordinates: [42.3867598, -72.5322402],
+        },
+      },
+    ]);
+    await res.send(location);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send(err);
+  }
+}
+
+async function getNearLoc(req, res) {
+  try {
+    const near = await GeoSpatialLocation.find({
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates: [42.314398, -71.036445],
+        },
+        $maxDistance: 122,
+        $minDistance: 150,
+      },
+    });
+    await res.send(near);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send(err);
+  }
+}
+
 module.exports = {
   addUniversity,
   addCourses,
   fetchData,
+  updateCourse,
+  textSearch,
+  addLocation,
+  getNearLoc,
 };

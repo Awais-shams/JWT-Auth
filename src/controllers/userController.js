@@ -1,20 +1,27 @@
 const bcrypt = require("bcrypt");
+const userService = require("../services/userService");
+const apiResponse = require("../helpers/apiResponse");
 
 const User = require("../models/user");
 
 async function loginUser(req, res, next) {
-  const user = await User.findOne({ email: req.body.email });
-  console.log(user);
   try {
-    const compare = await bcrypt.compare(req.body.password, user.password);
-    console.log(compare);
-    if (compare) {
-      const token = await user.generateAuthToken();
-      console.log(token);
-      res.header("x-auth-token", token).send({
-        token: token,
-      });
+    let loggedInUser = await userService.loginUser({
+      ...req.query,
+      ...req.params,
+      ...req.body,
+    });
+    if (loggedInUser) {
+      apiResponse(
+        false,
+        res,
+        code,
+        "User Login Successfully",
+        loggedInUser,
+        {}
+      );
     }
+    apiResponse(true, "Unable to Log In", null);
   } catch (err) {
     res.status(404).send(err);
   }

@@ -5,6 +5,7 @@ const app = express();
 const morgan = require("morgan");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
+const multer = require("multer");
 const user = require("./src/routes/userRoute");
 
 // * Built-in and custom middlewares
@@ -20,6 +21,17 @@ mongoose
   .then(() => console.log("Mongodb connection successful"))
   .catch(() => console.log("Mongodb connection failed"));
 
+const diskStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./assets/images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: diskStorage });
+
 // * RESTFul Api's
 app.get("/", (req, res) => {
   res.set("Content-Type", "text/html");
@@ -30,6 +42,11 @@ app.use("/api/user", user);
 app.use("/api/university", user);
 app.use("/api/course", user);
 app.use("/api/data", user);
+app.use("/api/geo", user);
+
+// *Multer file uploading
+app.use("/api/file", upload.single("image"), user);
+app.use("/api/files", upload.array("images", 3), user);
 
 // * Creating a web server
 app.listen(port, () => console.log(`Listening on Port ${port}...`));

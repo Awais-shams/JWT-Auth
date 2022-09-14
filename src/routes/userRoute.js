@@ -6,6 +6,11 @@ const loginValidator = require("../middlewares/loginValidator");
 const registerValidator = require("../middlewares/registerValidation");
 
 const {
+  uploadSingleFile,
+  uploadMultipleFiles,
+} = require("../controllers/files");
+
+const {
   loginUser,
   registerUser,
   getUserById,
@@ -13,7 +18,15 @@ const {
   deleteUserById,
 } = require("../controllers/userController");
 
-const { addUniversity, addCourses, fetchData } = require("../controllers/test");
+const {
+  addUniversity,
+  addCourses,
+  fetchData,
+  updateCourse,
+  textSearch,
+  addLocation,
+  getNearLoc,
+} = require("../controllers/test");
 
 router.post("/login", loginValidator, loginUser);
 router.post("/register", registerValidator, registerUser);
@@ -25,7 +38,17 @@ router
 
 // * University and Courses Routes
 router.post("/", addUniversity);
-router.post("/add", addCourses);
 router.get("/", fetchData);
+router.post("/add", addCourses);
+router.put("/update/:id", updateCourse);
+router.get("/textSearch/name", textSearch);
+
+// * Geospatial location
+router.post("/location", addLocation);
+router.get("/location/near", getNearLoc);
+
+// * Multer File
+router.post("/single", uploadSingleFile);
+router.post("/multiple", uploadMultipleFiles);
 
 module.exports = router;
